@@ -1,0 +1,40 @@
+GET http://localhost:5000/api/patients?page=1&limit=10&search=
+###
+GET http://localhost:5000/api/patients/patient-001
+
+###
+GET http://localhost:5000/api/patients/patient-001/records
+
+
+###
+GET http://localhost:5000/api/consents?status=active
+
+
+###
+POST http://localhost:5000/api/consents
+content-Type: application/json
+
+{
+    "patientId": "patient-003",
+    "purpose": "Insurance Provider Access",
+    "walletAddress": "0x0d46fdabb3c6f03b51768a258d7a16a06c2de5e3",
+    "message": "I consent to: Insurance Provider Access for patient: patient-003",
+    "signature": "0x48a51f3e81ec15811ace2d21466e744171a6cca4504cd59934d1c94705759eba5eb295f5bd7aba4b64a9e595691fdd7e594cf128b91dbb91e8e8c0bac52892911b",
+    "status": "pending"
+}
+
+###
+
+PATCH http://localhost:5000/api/consents/consent-002
+content-Type: application/json
+
+{
+    "status": "active"
+}
+
+
+###
+GET  http://localhost:5000/api/transactions?walletAddress=0x0d46fdabb3c6f03b51768a258d7a16a06c2de5e3&limit=20
+
+###
+GET http://localhost:5000/api/stats
