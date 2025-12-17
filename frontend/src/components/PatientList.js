@@ -7,23 +7,21 @@ const PatientList = ({ onSelectPatient }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  // Local input value to avoid focus loss during rapid re-renders.
+  // We apply a debounce and only update `searchTerm` used for API calls.
+  const [inputValue, setInputValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState(null);
 
   const PAGE_SIZE = 10;
 
-  // TODO: Implement the fetchPatients function
-  // This function should:
-  // 1. Call apiService.getPatients with appropriate parameters (page, limit, search)
-  // 2. Update the patients state with the response data
-  // 3. Update the pagination state
-  // 4. Handle loading and error states
+  // Fetch patients from the API with pagination and optional search.
+  // Calls `apiService.getPatients(page, limit, search)` and updates
+  // `patients`, `pagination`, and local loading/error state.
   const fetchPatients = async () => {
-    // Your implementation here
     setLoading(true);
     setError(null);
     try {
-      // TODO: Call API and update state
       const response = await apiService.getPatients(
         currentPage,
         PAGE_SIZE,
@@ -42,14 +40,22 @@ const PatientList = ({ onSelectPatient }) => {
     fetchPatients();
   }, [currentPage, searchTerm]);
 
-  // TODO: Implement search functionality
-  // Add a debounce or handle search input changes
+  // Update the visible input immediately and reset to first page.
+  // The actual `searchTerm` used for fetching will be updated
+  // after a short debounce to avoid excessive API calls and
+  // potential focus/re-render issues.
   const handleSearch = (e) => {
     setCurrentPage(1);
-    setSearchTerm(e.target.value);
+    setInputValue(e.target.value);
   };
-  // Your implementation here
-  // };
+
+  // Debounce inputValue -> searchTerm (300ms)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearchTerm(inputValue);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [inputValue]);
 
   if (loading) {
     return (
@@ -71,20 +77,17 @@ const PatientList = ({ onSelectPatient }) => {
     <div className="patient-list-container">
       <div className="patient-list-header">
         <h2>Patients</h2>
-        {/* TODO: Add search input field */}
+        {/* Search input for filtering patients by name, id, or other fields */}
         <input
           type="text"
           placeholder="Search patients..."
           className="search-input"
-          value={searchTerm}
+          value={inputValue}
           onChange={handleSearch}
-          // TODO: Add value, onChange handlers
         />
       </div>
 
-      {/* TODO: Implement patient list display */}
-      {/* Map through patients and display them */}
-      {/* Each patient should be clickable and call onSelectPatient with patient.id */}
+      {/* Patient cards: clickable entries that open patient details via `onSelectPatient`. */}
       <div className="patient-list">
         {/* Your implementation here */}
         {patients.length === 0 ? (
@@ -137,11 +140,9 @@ const PatientList = ({ onSelectPatient }) => {
         )}
       </div>
 
-      {/* TODO: Implement pagination controls */}
-      {/* Show pagination buttons if pagination data is available */}
+      {/* Pagination controls shown when multiple pages exist. */}
       {pagination && pagination.totalPages > 1 && (
         <div className="pagination">
-          {/* Your pagination implementation here */}
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}

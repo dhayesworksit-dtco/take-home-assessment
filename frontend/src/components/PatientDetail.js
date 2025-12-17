@@ -14,16 +14,18 @@ const PatientDetail = ({ patientId, onBack }) => {
     return new Date(date).toLocaleDateString();
   };
 
-  // TODO: Implement fetchPatientData function
-  // This should fetch both patient details and their records
+  // Fetch patient details and associated medical records whenever
+  // `patientId` changes. Uses `apiService.getPatient` and
+  // `apiService.getPatientRecords` and updates local `patient` and
+  // `records` state while managing loading and error states.
   useEffect(() => {
     const fetchPatientData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // TODO: Fetch patient data using apiService.getPatient(patientId)
-        // TODO: Fetch patient records using apiService.getPatientRecords(patientId)
-        // TODO: Update state with fetched data
+        // Fetch patient details and records in parallel and update state.
+        // Note: `getPatientRecords` may return an array or an object
+        // with a `records` property — normalization is handled below.
         const [patientRes, recordsRes] = await Promise.all([
           apiService.getPatient(patientId),
           apiService.getPatientRecords(patientId),
@@ -75,11 +77,12 @@ const PatientDetail = ({ patientId, onBack }) => {
       </div>
 
       <div className="patient-detail-content">
-        {/* TODO: Display patient information */}
-        {/* Show: name, email, dateOfBirth, gender, phone, address, walletAddress */}
+        {/* Patient information section: shows name, contact info, DOB,
+            gender, address and connected wallet. Values fall back to
+            a readable placeholder when missing. */}
         <div className="patient-info-section">
           <h2>Patient Information</h2>
-          {/* Your implementation here */}
+          {/* Rendered below: label/value grid with safe fallbacks */}
           <div className="patient-info-grid">
             <div className="info-item">
               <span className="info-label">Name</span>
@@ -122,11 +125,11 @@ const PatientDetail = ({ patientId, onBack }) => {
           </div>
         </div>
 
-        {/* TODO: Display patient records */}
-        {/* Show list of medical records with: type, title, date, doctor, hospital, status */}
+        {/* Medical records section: lists the patient's records with
+            type, title, date, provider, hospital and verification status. */}
         <div className="patient-records-section">
           <h2>Medical Records ({records.length})</h2>
-          {/* Your implementation here */}
+          {/* Records are rendered as cards; if none exist a placeholder is shown. */}
           {records.length === 0 ? (
             <div className="placeholder">No medical records found</div>
           ) : (

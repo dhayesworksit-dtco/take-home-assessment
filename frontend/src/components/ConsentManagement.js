@@ -20,11 +20,15 @@ const ConsentManagement = ({ account }) => {
     setLoading(true);
     setError(null);
     try {
-      // TODO: Call apiService.getConsents with appropriate filters
-      // TODO: Update consents state
+      // Fetch consents from the backend using the currently selected
+      // status filter. When `filterStatus` is "all" we pass `null`
+      // so the service returns all consents regardless of status.
       const status = filterStatus === "all" ? null : filterStatus;
       const data = await apiService.getConsents(null, status);
 
+      // Ensure we only set an array of consents. Some API responses may
+      // return null or an object without a `consents` array — guard against
+      // that by falling back to an empty array to avoid runtime/render errors.
       setConsents(Array.isArray(data?.consents) ? data.consents : []);
     } catch (err) {
       setError(err.message || "Failed to fetch consents");
@@ -37,11 +41,9 @@ const ConsentManagement = ({ account }) => {
     fetchConsents();
   }, [filterStatus]);
 
-  // TODO: Implement createConsent function
-  // This should:
-  // 1. Sign a message using signMessage from useWeb3 hook
-  // 2. Call apiService.createConsent with the consent data and signature
-  // 3. Refresh the consents list
+  // Create a new consent by signing a readable consent message with
+  // the user's wallet, verifying the signature server-side, submitting
+  // the consent payload to the API, and refreshing the list on success.
   const handleCreateConsent = async (e) => {
     e.preventDefault();
     if (!account) {
@@ -50,11 +52,8 @@ const ConsentManagement = ({ account }) => {
     }
 
     try {
-      // TODO: Implement consent creation with signature
-      // 1. Create a message to sign (e.g., "I consent to: {purpose} for patient: {patientId}")
-      // 2. Sign the message using signMessage
-      // 3. Call apiService.createConsent with patientId, purpose, account, and signature
-      // 4. Refresh consents and reset form
+      // Build and sign a human-readable consent message, verify the
+      // signature via the API, then create the consent and refresh UI.
       const message = `I consent to: ${formData.purpose} for patient: ${formData.patientId}`;
       const signature = await signMessage(message);
 
@@ -84,12 +83,12 @@ const ConsentManagement = ({ account }) => {
     }
   };
 
-  // TODO: Implement updateConsentStatus function
-  // This should update a consent's status (e.g., from pending to active)
+  // Update a consent's status (for example: pending -> active).
+  // Calls the API to update the record and refreshes the local list
+  // so the UI reflects the latest status.
   const handleUpdateStatus = async (consentId, newStatus) => {
     try {
-      // TODO: Call apiService.updateConsent to update the status
-      // TODO: Refresh consents list
+      // Update status via API and refresh the consents list.
       await apiService.updateConsent(consentId, { status: newStatus });
 
       fetchConsents();
@@ -193,12 +192,10 @@ const ConsentManagement = ({ account }) => {
         </button>
       </div>
 
-      {/* TODO: Display consents list */}
+      {/* Render list of consents as cards. Each card shows patient ID,
+          purpose, status, creation time, optional blockchain tx hash,
+          and provides actions (e.g., activate) when applicable. */}
       <div className="consents-list">
-        {/* Your implementation here */}
-        {/* Map through consents and display them */}
-        {/* Show: patientId, purpose, status, createdAt, blockchainTxHash */}
-        {/* Add buttons to update status for pending consents */}
         {consents.length === 0 ? (
           <div className="placeholder">No consents found</div>
         ) : (

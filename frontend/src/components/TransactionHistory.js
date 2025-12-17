@@ -7,14 +7,15 @@ const TransactionHistory = ({ account }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // TODO: Implement fetchTransactions function
+  // Load recent blockchain transactions (optionally filtered by wallet)
   useEffect(() => {
     const fetchTransactions = async () => {
       setLoading(true);
       setError(null);
       try {
-        // TODO: Call apiService.getTransactions with account address if available
-        // TODO: Update transactions state
+        // Request recent transactions from the backend; pass the
+        // connected `account` (if present) and limit (20) to scope
+        // results. The response is normalized below into `txs`.
         const response = await apiService.getTransactions(account, 20);
 
         let txs = response.transactions || [];
@@ -45,11 +46,9 @@ const TransactionHistory = ({ account }) => {
     return `${address.slice(0, 8)}...${address.slice(-6)}`;
   };
 
+  // Format a timestamp to a human-readable date/time string.
   const formatDate = (timestamp) => {
-    // TODO: Format the timestamp to a readable date
-    const formatDate = (timestamp) => {
-      return timestamp ? new Date(timestamp).toLocaleString() : "—";
-    };
+    return timestamp ? new Date(timestamp).toLocaleString() : "—";
   };
 
   const formatGasPrice = (wei) => (wei ? `${Number(wei) / 1e9} Gwei` : "—");
@@ -81,10 +80,9 @@ const TransactionHistory = ({ account }) => {
         )}
       </div>
 
-      {/* TODO: Display transactions list */}
-      {/* Show: type, from, to, amount, currency, status, timestamp, blockchainTxHash */}
+        {/* Transactions list: each card shows type, from/to addresses,
+          amount/currency, status, timestamp, block & tx hash. */}
       <div className="transactions-list">
-        {/* Your implementation here */}
         {transactions.length === 0 ? (
           <div className="placeholder">No transactions found</div>
         ) : (

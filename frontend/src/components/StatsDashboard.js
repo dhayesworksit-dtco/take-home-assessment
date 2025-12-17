@@ -7,14 +7,14 @@ const StatsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // TODO: Implement fetchStats function
+  // Load platform statistics on mount. Uses `apiService.getStats()`
+  // and keeps `loading`/`error` states in sync.
   useEffect(() => {
     const fetchStats = async () => {
       setLoading(true);
       setError(null);
       try {
-        // TODO: Call apiService.getStats()
-        // TODO: Update stats state
+        // Request statistics from the backend and update local state
         const response = await apiService.getStats();
         setStats(response);
       } catch (err) {
@@ -49,8 +49,8 @@ const StatsDashboard = () => {
     <div className="stats-dashboard-container">
       <h2>Platform Statistics</h2>
 
-      {/* TODO: Display statistics in a nice grid layout */}
-      {/* Show: totalPatients, totalRecords, totalConsents, activeConsents, pendingConsents, totalTransactions */}
+        {/* Statistics grid: shows totals for patients, records, consents,
+          active/pending consents and blockchain transactions. */}
       <div className="stats-grid">
         <div className="stat-card primary">
           <div className="stat-label">Total Patients</div>
